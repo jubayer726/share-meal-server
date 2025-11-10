@@ -24,15 +24,25 @@ async function run() {
   try {
     await client.connect();
     //Collections
-    const db = client.db("assignment-DB");
-    const mealCollection = db.collection("meals");
+    const db = client.db("share-meal");
+    const foodCollection = db.collection("foods");
 
-    // find
+    // find foods
+    app.get('/foods', async (req, res)=>{
+      const result = await foodCollection.find().sort({food_quantity: "-1"}).limit(6).toArray();
+      res.send(result);
+    })
+
+    // find all foods
+    app.get('/available-foods', async (req, res)=>{
+      const result = await foodCollection.find().toArray();
+      res.send(result);
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
