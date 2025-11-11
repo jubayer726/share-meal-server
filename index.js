@@ -67,10 +67,7 @@ async function run() {
         $set: data,
       };
       const result = await foodCollection.updateOne(filter, update);
-      res.send({
-        success: true,
-        result,
-      });
+      res.send(result);
     });
 
     // Manage foods
@@ -101,6 +98,8 @@ async function run() {
     res.send(result);
   });
 }
+
+
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
