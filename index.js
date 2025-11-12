@@ -3,13 +3,13 @@ const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const cors = require("cors");
 const app = express();
 const port = 3000;
-
+require("dotenv").config();
 //Middleware
 app.use(cors());
 app.use(express.json());
 
 const uri =
-  "mongodb+srv://share-meal:z8QLY86SqIVbiY9e@cluster0.t8kbwcq.mongodb.net/?appName=Cluster0";
+  `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.t8kbwcq.mongodb.net/?appName=Cluster0`;
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -82,6 +82,13 @@ async function run() {
       const result = await foodCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     });
+
+    //Search
+   app.get('/search', async (req, res)=>{
+      const search_text = req.query.search;
+      const result = await foodCollection.find({food_name: {$regex: search_text, $options: "i"}}).toArray();
+      res.send(result);
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log(
